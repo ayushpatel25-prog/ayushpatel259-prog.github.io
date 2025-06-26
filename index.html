@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Family</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #a1c4fd 0%, #f5a9b8 100%);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #008080;
+            font-size: 3em;
+            margin: 20px 0;
+            animation: fadeIn 1s ease-in;
+            position: relative;
+            z-index: 10;
+        }
+        .family-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            position: relative;
+            z-index: 10;
+            max-height: calc(100vh - 160px); /* Adjusted for header and thought */
+            width: 100%;
+            max-width: 300px; /* Constrain width for better mobile experience */
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px 0;
+        }
+        .family-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for cleaner look */
+        }
+        .family-member {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInScale 0.8s ease-out forwards;
+        }
+        .family-member:nth-child(1) { animation-delay: 0.2s; }
+        .family-member:nth-child(2) { animation-delay: 0.4s; }
+        .family-member:nth-child(3) { animation-delay: 0.6s; }
+        .family-member:nth-child(4) { animation-delay: 0.8s; }
+        .family-member img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            transition: transform 0.3s ease;
+        }
+        .family-member img:hover {
+            transform: scale(1.05);
+        }
+        .family-member.ayush img {
+            border: 4px solid #FFD700; /* Golden frame for Ayush */
+        }
+        .family-member.akshat img {
+            border: 4px solid #32CD32; /* Lime Green frame for Akshat */
+        }
+        .family-member.anil img {
+            border: 4px solid #4169E1; /* Royal Blue frame for Anil */
+        }
+        .family-member.archana img {
+            border: 4px solid #FF7F50; /* Coral frame for Archana */
+        }
+        .family-member h3 {
+            color: #34495e;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        .family-member h3:hover {
+            color: #e74c3c;
+        }
+        .family-member h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            transition: width 0.5s ease-in-out;
+        }
+        .family-member h3.frame-active::after {
+            width: 100%;
+        }
+        .family-member.ayush h3::after {
+            background-color: #FFD700; /* Golden frame for Ayush */
+        }
+        .family-member.akshat h3::after {
+            background-color: #32CD32; /* Lime Green frame for Akshat */
+        }
+        .family-member.anil h3::after {
+            background-color: #4169E1; /* Royal Blue frame for Anil */
+        }
+        .family-member.archana h3::after {
+            background-color: #FF7F50; /* Coral frame for Archana */
+        }
+        .family-member p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .thought {
+            font-style: italic;
+            color: #e74c3c;
+            margin: 20px 0;
+            font-size: 1.2em;
+            opacity: 0;
+            animation: fadeIn 1s ease-in 1s forwards;
+            position: relative;
+            z-index: 10;
+            max-width: 300px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        .modal-content h3 {
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+        .modal-content p {
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+        .modal-content .detail-label {
+            font-weight: bold;
+            color: #34495e;
+        }
+        .modal-content .quote {
+            font-style: italic;
+            color: #e74c3c;
+        }
+        .modal-content button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .modal-content button:hover {
+            background-color: #c0392b;
+        }
+        /* Heart Animation Styles */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #e74c3c;
+            transform: rotate(-45deg);
+            animation: float 10s infinite;
+            z-index: 5;
+        }
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+        }
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+        .heart::after {
+            left: 10px;
+            top: 0;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(-45deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>One Family</h1>
+    <div class="family-container" id="familyContainer"></div>
+    <p class="thought">"Together we stand, united in love, sharing moments that make life beautiful."</p>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3 id="modalName"></h3>
+            <p id="modalIntro"></p>
+            <p><span class="detail-label">Age:</span> <span id="modalAge"></span></p>
+            <p><span class="detail-label">Favorite Hobby:</span> <span id="modalHobby"></span></p>
+            <p><span class="detail-label">Personal Quote:</span> <span id="modalQuote" class="quote"></span></p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const familyMembers = [
+            {
+                name: "Ayush Patel",
+                role: "Myself",
+                image: "me.jpeg",
+                intro: "I'm Ayush, passionate about learning and exploring new ideas. I love spending time with my family and pursuing my dreams with determination.",
+                age: "21",
+                hobby: "Reading and Coding",
+                quote: "Dream big, work hard, stay focused.",
+                class: "ayush"
+            },
+            {
+                name: "Akshat Patel",
+                role: "Younger Brother",
+                image: "bholu.jpeg",
+                intro: "Akshat is my energetic younger brother, always full of curiosity and ready for fun adventures with a bright smile.",
+                age: "17",
+                hobby: "Playing Soccer",
+                quote: "Life is an adventure, embrace every moment!",
+                class: "akshat"
+            },
+            {
+                name: "Anil Singh Patel",
+                role: "Father",
+                image: "papa.jpeg",
+                intro: "My father, Anil, is the pillar of our family, guiding us with wisdom and supporting us with unwavering strength.",
+                age: "47",
+                hobby: "Gardening",
+                quote: "Strength lies in patience and perseverance.",
+                class: "anil"
+            },
+            {
+                name: "Archana Singh Patel",
+                role: "Mother",
+                image: "mummy.jpeg",
+                intro: "My mother, Archana, is the heart of our home, filling our lives with love, care, and delicious homemade meals.",
+                age: "42",
+                hobby: "Cooking",
+                quote: "Love is the secret ingredient in every recipe.",
+                class: "archana"
+            }
+        ];
+
+        const container = document.getElementById('familyContainer');
+        const modal = document.getElementById('modal');
+        const modalName = document.getElementById('modalName');
+        const modalIntro = document.getElementById('modalIntro');
+        const modalAge = document.getElementById('modalAge');
+        const modalHobby = document.getElementById('modalHobby');
+        const modalQuote = document.getElementById('modalQuote');
+
+        familyMembers.forEach(member => {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = `family-member ${member.class}`;
+            memberDiv.innerHTML = `
+                <img src="${member.image}" alt="${member.name}">
+                <h3 onclick="showModal('${member.name}', '${member.intro}', '${member.age}', '${member.hobby}', '${member.quote}', this)">${member.name}</h3>
+                <p>${member.role}</p>
+            `;
+            container.appendChild(memberDiv);
+        });
+
+        function showModal(name, intro, age, hobby, quote, element) {
+            // Remove frame-active from all h3 elements
+            document.querySelectorAll('.family-member h3').forEach(h3 => h3.classList.remove('frame-active'));
+            // Add frame-active to the clicked h3
+            element.classList.add('frame-active');
+            modalName.textContent = name;
+            modalIntro.textContent = intro;
+            modalAge.textContent = age;
+            modalHobby.textContent = hobby;
+            modalQuote.textContent = quote;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            // Remove frame-active from all h3 elements when modal closes
+            document.querySelectorAll('.family-member h3').forEach(h3 => h3.classList.remove('frame-active'));
+        }
+
+        // Create animated hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
+        }
+
+        // Generate hearts every 1 second
+        setInterval(createHeart, 1000);
+
+        // Enhanced swipe functionality with momentum
+        let isDragging = false;
+        let startPosY = 0;
+        let startScrollTop = 0;
+        let velocity = 0;
+        let lastY = 0;
+        let lastTime = 0;
+
+        container.addEventListener('mousedown', startDragging);
+        container.addEventListener('touchstart', startDragging, { passive: false });
+
+        container.addEventListener('mousemove', drag);
+        container.addEventListener('touchmove', drag, { passive: false });
+
+        container.addEventListener('mouseup', stopDragging);
+        container.addEventListener('touchend', stopDragging);
+        container.addEventListener('mouseleave', stopDragging);
+
+        function startDragging(e) {
+            isDragging = true;
+            startPosY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            startScrollTop = container.scrollTop;
+            velocity = 0;
+            lastY = startPosY;
+            lastTime = Date.now();
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const y = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            const delta = startPosY - y;
+            container.scrollTop = startScrollTop + delta;
+
+            // Calculate velocity for momentum
+            const currentTime = Date.now();
+            const timeDelta = currentTime - lastTime;
+            if (timeDelta > 0) {
+                velocity = (y - lastY) / timeDelta;
+            }
+            lastY = y;
+            lastTime = currentTime;
+        }
+
+        function stopDragging() {
+            if (!isDragging) return;
+            isDragging = false;
+
+            // Apply momentum
+            const momentum = setInterval(() => {
+                if (Math.abs(velocity) < 0.01) {
+                    clearInterval(momentum);
+                    return;
+                }
+                container.scrollTop += velocity * 10;
+                velocity *= 0.95; // Dampen velocity for smooth deceleration
+            }, 16);
+        }
+    </script>
+</body>
+</html>
